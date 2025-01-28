@@ -1,12 +1,49 @@
-
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <!--  burger menu / button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasNavbar"
+      aria-controls="offcanvasNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- normal menu -->
+    <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link" routerLink="/employee-charts" routerLinkActive="active">Employee Charts</a>
-        <a class="nav-link" routerLink="/employee-lists" routerLinkActive="active">Employee Lists</a>
-        <a class="nav-link" routerLink="/employee-med-details" routerLinkActive="active">Employee Medical Details</a>
-        <a class="nav-link" routerLink="/settings" routerLinkActive="active">Settings</a>
+        <a mat-button class="nav-link" routerLink="/employee-charts" routerLinkActive="active">Employee Charts</a>
+        <a mat-button class="nav-link" routerLink="/employee-lists" routerLinkActive="active">Employee Lists</a>
+        <a mat-button class="nav-link" routerLink="/employee-med-details" routerLinkActive="active">Employee Medical Details</a>
+        <a mat-button class="nav-link" routerLink="/settings" routerLinkActive="active">Settings</a>
+      </div>
+    </div>
+
+    <!-- large / normal screen menu || vertical menu -->
+    <!-- offcanvas -> means attribute which closes navbar -->
+    <div
+      class="offcanvas offcanvas-start bg-body-tertiary d-lg-none"
+      tabindex="-1"
+      id="offcanvasNavbar"
+      aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="navbar-nav flex-column">
+          <a class="nav-link" routerLink="/employee-charts" routerLinkActive="active" data-bs-dismiss="offcanvas">Employee Charts</a>
+          <a class="nav-link" routerLink="/employee-lists" routerLinkActive="active" data-bs-dismiss="offcanvas">Employee Lists</a>
+          <a class="nav-link" routerLink="/employee-med-details" routerLinkActive="active" data-bs-dismiss="offcanvas">Employee Medical Details</a>
+          <a class="nav-link" routerLink="/settings" routerLinkActive="active" data-bs-dismiss="offcanvas">Settings</a>
+        </div>
       </div>
     </div>
   </div>
