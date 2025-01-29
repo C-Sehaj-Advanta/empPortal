@@ -1,0 +1,67 @@
+/* Spinner Alignment */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  margin-top: 20px;
+}
+
+/* Controls Spacing */
+.mb-3 input {
+  padding: 8px;
+}
+
+h2 {
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+th, td {
+  text-align: left;
+  padding: 10px;
+}
+
+th {
+  background-color: #343a40;
+  color: #fff;
+}
+
+th:hover {
+  background-color: #555;
+}
+
+button {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+/* Sorting Arrow */
+.bi {
+  font-size: 16px;
+}
+
+img.IDimg {
+  width: 50px; /* Set the width to a fixed size */
+  height: 50px; /* Maintain aspect ratio */
+  border-radius: 50%;
+  object-fit: cover; /* To keep images within a square shape */
+  margin-right: 0%;
+}
+
+.table-container {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+table {
+  min-width: 1000px; /* Adjust based on your column width and total content */
+}
+
+mat-paginator {
+  margin-top: 20px;
+}

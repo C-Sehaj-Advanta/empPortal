@@ -1,1 +1,93 @@
-<p>employee-charts works!</p>
+<div class="container mt-4">
+  <h2 class="text-secondary">Employee Data</h2>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <!-- Search and Filter Inputs -->
+  <div *ngIf="!loading && !error" class="mb-3 row">
+    <div class="col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by name or email"
+        [(ngModel)]="searchQuery"
+        (input)="applyFilters()"
+      />
+    </div>
+    <div class="col-md-6">
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Filter by age"
+        [(ngModel)]="filterAge"
+        (input)="applyFilters()"
+      />
+    </div>
+  </div>
+
+  <!-- Sort Buttons -->
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary" (click)="toggleSort('id')">Sort by ID</button>
+    <button class="btn btn-outline-secondary" (click)="toggleSort('firstName')">Sort by First Name</button>
+    <button class="btn btn-outline-secondary" (click)="toggleSort('age')">Sort by Age</button>
+    <button class="btn btn-outline-secondary" (click)="toggleSort('salary')">Sort by Salary</button> <!-- Added Sorting for Salary -->
+  </div>
+
+  <!-- Employee Table with Horizontal Scrolling -->
+  <div class="table-container">
+    <table class="table table-bordered table-striped" *ngIf="!loading && !error && filteredData.length > 0">
+      <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Profile</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Age</th>
+        <th>Contact No.</th>
+        <th>Address</th>
+        <th>DOB</th>
+        <th>Salary</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let employee of filteredData">
+        <td>{{ employee.id }}</td>
+        <td><img src="{{ employee.imageUrl }}" alt="image" class="IDimg"></td>
+        <td>{{ employee.firstName }}</td>
+        <td>{{ employee.lastName }}</td>
+        <td>{{ employee.email }}</td>
+        <td>{{ employee.age }}</td>
+        <td>{{ employee.contactNumber }}</td>
+        <td>{{ employee.address }}</td>
+        <td>{{ employee.dob }}</td>
+        <td>₹{{ employee.salary }},00,00,000</td> <!-- Display Salary with Currency Pipe -->
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Results Message -->
+  <div *ngIf="!loading && !error && filteredData.length === 0" class="text-center">
+    <p class="text-muted">No employees match your criteria.</p>
+  </div>
+
+  <!-- Angular Material Pagination -->
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[10]"
+    [pageIndex]="currentPage"
+    (page)="pageChanged($event)">
+  </mat-paginator>
+</div>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterLink, RouterOutlet} from '@angular/router';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,8 @@ import {RouterLink, RouterOutlet} from '@angular/router';
   imports: [
     CommonModule,
     RouterOutlet,
-    RouterLink //Added in Angular 17; no modules; must import this for routing.
+    RouterLink, //Added in Angular 17; no modules; must import this for routing.
+    NgxPaginationModule
   ],
   styleUrl: './app.component.css'
 })
