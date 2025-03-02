@@ -2,3 +2,20 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.dark-mode {
+  --mat-background: #121212;
+  --mat-surface: #1e1e1e;
+  --mat-primary: #90caf9;
+  --mat-accent: #ff4081;
+  --mat-text: #ffffff;
+  background-color: var(--mat-background);
+  color: var(--mat-text);
+}
+
+.dark-mode .mat-card,
+.dark-mode .mat-toolbar,
+.dark-mode .mat-button {
+  background-color: var(--mat-surface);
+  color: var(--mat-text);
+}

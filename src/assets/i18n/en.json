@@ -1,0 +1,8 @@
+{
+  "nav": [{
+    "Home": "Home",
+    "EmpLists": "Employee Lists",
+    "EmpCharts": "Employee Charts",
+    "EmpMed": "Employee Medical Details"
+  }]
+}
