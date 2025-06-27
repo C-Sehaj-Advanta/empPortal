@@ -8,6 +8,8 @@ import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {routes} from './app/app.routes';
+import { provideRouter } from '@angular/router';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -18,6 +20,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
+    provideRouter(routes),
     importProvidersFrom(
       TranslateModule.forRoot({
         loader: {

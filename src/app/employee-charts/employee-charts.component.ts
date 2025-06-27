@@ -1,137 +1,36 @@
-// import { Component, inject, OnInit } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { HttpClientModule, HttpClient } from '@angular/common/http';
-// import { FormsModule } from '@angular/forms';
-// import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-// import {MatTooltipModule} from '@angular/material/tooltip';
-// import {MatButtonModule} from '@angular/material/button';
-//
-// @Component({
-//   selector: 'app-employee-charts',
-//   standalone: true,
-//   imports: [CommonModule, HttpClientModule, FormsModule, MatPaginatorModule, MatTooltipModule, MatButtonModule],
-//   templateUrl: './employee-charts.component.html',
-//   styleUrls: ['./employee-charts.component.css']
-// })
-// export class EmployeeListsComponent implements OnInit {
-//   httpClient = inject(HttpClient);
-//
-//   data: any[] = []; // Original data fetched from API
-//   filteredData: any[] = []; // Filtered data for display
-//   loading = false;
-//   error: string | null = null;
-//
-//   // Pagination settings
-//   totalItems = 50; // Total 50 users
-//   pageSize = 10;   // 10 users per page
-//   currentPage = 0; // Page index starts from 0
-//
-//   // Search and filter fields
-//   searchQuery = '';
-//   filterAge: number | null = null;
-//
-//   // Sorting state
-//   sortColumn: string = '';
-//   sortDirection: boolean = true; // true for ascending, false for descending
-//
-//   ngOnInit(): void {
-//     this.fetchData();
-//   }
-//
-//   fetchData() {
-//     this.loading = true;
-//     this.error = null;
-//
-//     this.httpClient.get('https://hub.dummyapis.com/employee?noofRecords=50&idStarts=1001')
-//       .subscribe({
-//         next: (data: any) => {
-//           this.data = data;
-//           this.filteredData = data.slice(0, this.pageSize); // Initialize filtered data with the first 10 items
-//           this.loading = false;
-//         },
-//         error: () => {
-//           this.error = 'Failed to fetch data. Please try again later.';
-//           this.loading = false;
-//         }
-//       });
-//   }
-//
-//   applyFilters() {
-//     const query = this.searchQuery.toLowerCase();
-//     this.filteredData = this.data.filter(employee => {
-//       const matchesSearch = employee.firstName.toLowerCase().includes(query) ||
-//         employee.lastName.toLowerCase().includes(query) ||
-//         employee.email.toLowerCase().includes(query);
-//       const matchesAge = this.filterAge ? employee.age === this.filterAge : true;
-//       return matchesSearch && matchesAge;
-//     });
-//     this.sortData();
-//   }
-//
-//   sortData() {
-//     if (this.sortColumn) {
-//       this.filteredData.sort((a, b) => {
-//         const aValue = a[this.sortColumn];
-//         const bValue = b[this.sortColumn];
-//
-//         let comparison = 0;
-//         if (typeof aValue === 'string' && typeof bValue === 'string') {
-//           comparison = aValue.localeCompare(bValue);
-//         } else if (typeof aValue === 'number' && typeof bValue === 'number') {
-//           comparison = aValue - bValue;
-//         }
-//
-//         return this.sortDirection ? comparison : -comparison;
-//       });
-//     }
-//   }
-//
-//   toggleSort(column: string) {
-//     if (this.sortColumn === column) {
-//       this.sortDirection = !this.sortDirection; // Toggle direction if the same column is clicked
-//     } else {
-//       this.sortColumn = column;
-//       this.sortDirection = true; // Default to ascending
-//     }
-//     this.sortData();
-//   }
-//
-//   // Pagination handling
-//   pageChanged(event: PageEvent) {
-//     this.currentPage = event.pageIndex;
-//     this.pageSize = event.pageSize;
-//     this.applyPagination();
-//   }
-//
-//   applyPagination() {
-//     const startIndex = this.currentPage * this.pageSize;
-//     const endIndex = startIndex + this.pageSize;
-//     this.filteredData = this.data.slice(startIndex, endIndex);
-//   }
-// }
-
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
-// import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { EmployeeService } from './employee.service';
+import { Employee } from './employee.model.js';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-employee-charts',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule, MatPaginatorModule, MatTooltipModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    FormsModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+    MatButtonModule
+  ],
   templateUrl: './employee-charts.component.html',
   styleUrls: ['./employee-charts.component.css']
 })
 export class EmployeeListsComponent implements OnInit {
   httpClient = inject(HttpClient);
 
-  data: any[] = [];
-  filteredData: any[] = [];
+  data: Employee[] = [];
+  filteredData: Employee[] = [];
+  filteredSortedData: Employee[] = [];
+
   loading = false;
   error: string | null = null;
 
@@ -145,6 +44,11 @@ export class EmployeeListsComponent implements OnInit {
   sortColumn: string = '';
   sortDirection: boolean = true;
 
+  constructor(
+    private employeeService: EmployeeService,
+    private router: Router
+  ) {}
+
   ngOnInit(): void {
     this.fetchData();
   }
@@ -152,46 +56,46 @@ export class EmployeeListsComponent implements OnInit {
   fetchData() {
     this.loading = true;
     this.error = null;
-
-    this.httpClient.get('https://hub.dummyapis.com/employee?noofRecords=50&idStarts=1001')
-      .subscribe({
-        next: (data: any) => {
-          this.data = data;
-          this.filteredData = data.slice(0, this.pageSize);
-          this.loading = false;
-        },
-        error: () => {
-          this.error = 'Failed to fetch data. Please try again later.';
-          this.loading = false;
-        }
-      });
+  
+    this.employeeService.getEmployees().subscribe({
+      next: (data: Employee[]) => {
+        this.data = data;
+        this.filteredSortedData = [...data]; // full filtered+sorted data
+        this.totalItems = data.length;
+        this.applyPagination();
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Failed to fetch data. Please try again later.';
+        this.loading = false;
+      }
+    });
   }
 
   applyFilters() {
     const query = this.searchQuery.toLowerCase();
-    this.filteredData = this.data.filter(employee => {
-      const matchesSearch = employee.firstName.toLowerCase().includes(query) ||
-        employee.lastName.toLowerCase().includes(query) ||
-        employee.email.toLowerCase().includes(query);
-      const matchesAge = this.filterAge ? employee.age === this.filterAge : true;
+    this.filteredSortedData = this.data.filter(employee => {
+      const matchesSearch = employee.employee_name.toLowerCase().includes(query);
+      const matchesAge = this.filterAge ? employee.employee_age === this.filterAge : true;
       return matchesSearch && matchesAge;
     });
     this.sortData();
+    this.applyPagination();
   }
 
   sortData() {
     if (this.sortColumn) {
-      this.filteredData.sort((a, b) => {
+      this.filteredSortedData.sort((a, b) => {
         const aValue = a[this.sortColumn];
         const bValue = b[this.sortColumn];
-
+  
         let comparison = 0;
         if (typeof aValue === 'string' && typeof bValue === 'string') {
           comparison = aValue.localeCompare(bValue);
         } else if (typeof aValue === 'number' && typeof bValue === 'number') {
           comparison = aValue - bValue;
         }
-
+  
         return this.sortDirection ? comparison : -comparison;
       });
     }
@@ -205,6 +109,7 @@ export class EmployeeListsComponent implements OnInit {
       this.sortDirection = true;
     }
     this.sortData();
+    this.applyPagination();
   }
 
   pageChanged(event: PageEvent) {
@@ -216,6 +121,10 @@ export class EmployeeListsComponent implements OnInit {
   applyPagination() {
     const startIndex = this.currentPage * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-    this.filteredData = this.data.slice(startIndex, endIndex);
+    this.filteredData = this.filteredSortedData.slice(startIndex, endIndex);
+  }
+
+  editEmployee(data: Employee): void {
+    this.router.navigate([`/employee-list/${data.id}/edit`]);
   }
 }
