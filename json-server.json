@@ -1,0 +1,15 @@
+{
+    "port": 3000,
+    "host": "localhost",
+    "db": "db.json",
+    "id": "id",
+    "readOnly": false,
+    "noCors": false,
+    "noGzip": false,
+    "static": "./public",
+    "logger": true,
+    "bodyParser": true,
+    "delay": 0,
+    "foreignKeySuffix": "Id",
+    "idType": "number"
+  }

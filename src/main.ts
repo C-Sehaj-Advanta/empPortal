@@ -10,6 +10,8 @@ import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-transla
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import {routes} from './app/app.routes';
 import { provideRouter } from '@angular/router';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -21,6 +23,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
     provideRouter(routes),
+    [provideCharts(withDefaultRegisterables())],
     importProvidersFrom(
       TranslateModule.forRoot({
         loader: {
@@ -30,6 +33,6 @@ bootstrapApplication(AppComponent, {
         }
       })
     ),
-    TranslateService
+    TranslateService, provideAnimationsAsync('noop'), provideAnimationsAsync()
   ]
 }).catch(err => console.error(err));

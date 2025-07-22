@@ -1,0 +1,10 @@
+.chart-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-wrap: wrap;          /* allow charts to wrap on smaller screens */
+    gap: 20px;                /* space between charts */
+    justify-content: center;  /* center charts horizontally */
+}

@@ -1,47 +1,21 @@
-
-import { Component, inject, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, AsyncPipe, NgIf } from '@angular/common'; // Required for common directives and async pipe
+import { ThemeService } from '../services/themes.service'; // Adjust path based on your project structure
+import { Router } from '@angular/router'; // Import Router for navigation
 
 @Component({
   selector: 'app-settings',
-  imports: [
-    CommonModule
-  ],
   standalone: true,
+  imports: [CommonModule, AsyncPipe],
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.css',
+  styleUrls: ['./settings.component.css'],
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit {
+  constructor(public themeService: ThemeService, private router: Router) {}
 
-  constructor(private translate: TranslateService) {
-    // Set default language
-    this.translate.setDefaultLang('en');
-    // Load saved language from localStorage or default to English
-    this.translate.use(localStorage.getItem('lang') || 'en');
+  ngOnInit(): void {}
+
+  goBack(): void {
+    this.router.navigate(['/employee-lists']);
   }
-
-  toggleDarkMode(isDarkMode: boolean) {
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('darkMode', 'enabled');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('darkMode', 'disabled');
-    }
-  }
-
-// Apply saved theme on component load
-  ngOnInit() {
-    if (localStorage.getItem('darkMode') === 'enabled') {
-      document.body.classList.add('dark-mode');
-    }
-  }
-
-
-  changeLanguage(lang: string) {
-    this.translate.use(lang);
-    localStorage.setItem('lang', lang);
-  }
-
 }

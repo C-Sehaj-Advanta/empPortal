@@ -35,11 +35,6 @@ th:hover {
   background-color: #555;
 }
 
-button {
-  margin-right: 10px;
-  margin-top: 10px;
-}
-
 /* Sorting Arrow */
 .bi {
   font-size: 16px;

@@ -1,1 +1,41 @@
-<p>employee-charts works!</p>
+<div class="container mt-4">
+  <div *ngIf="loading" class="text-center mb-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger text-center mb-4">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="row">
+    <div class="col-md-6 mb-4">
+      <h2 class="text-secondary mb-3">Employee Salary Bar Chart</h2>
+      <div class="chart-container">
+        <canvas
+          baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="'bar'"
+        >
+        </canvas>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <h2 class="text-secondary mb-3">
+        Employee Professions Pie Chart
+      </h2>
+      <div class="chart-container">
+        <canvas
+          baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="'pie'"
+        >
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>

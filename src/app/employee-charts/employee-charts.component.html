@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h2 class="text-secondary">Employee Data</h2>
+  <h2 class="text-secondary">Employee Data</h2><hr>
 
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="text-center">
@@ -13,7 +13,7 @@
     {{ error }}
   </div>
 
-  <!-- Search and Filter Inputs -->
+  <!-- Filter  -->
   <div *ngIf="!loading && !error" class="mb-3 row">
     <div class="col-md-6">
       <input
@@ -28,7 +28,7 @@
       <input
         type="number"
         class="form-control"
-        placeholder="Filter by age"
+        placeholder="Search by age"
         [(ngModel)]="filterAge"
         (input)="applyFilters()"
       />
@@ -37,11 +37,15 @@
 
   <!-- Sort Buttons -->
   <div class="mb-3">
-    <button class="btn btn-outline-secondary" (click)="toggleSort('id')">Sort by ID</button>
-    <button class="btn btn-outline-secondary" (click)="toggleSort('employee_name')">Sort by Name</button>
-    <button class="btn btn-outline-secondary" (click)="toggleSort('employee_salary')">Sort by Salary</button>
-    <button class="btn btn-outline-secondary" (click)="toggleSort('employee_age')">Sort by Age</button>
-  </div>
+    <button class="btn btn-outline-secondary me-3" (click)="toggleSort('id')">Sort by ID</button>
+    <button class="btn btn-outline-secondary me-3" (click)="toggleSort('employee_name')">Sort by Name</button>
+    <button class="btn btn-outline-secondary me-3" (click)="toggleSort('employee_salary')">Sort by Salary</button>
+    <button class="btn btn-outline-secondary me-3" (click)="toggleSort('employee_age')">Sort by Age</button>
+  </div><hr>
+
+  <button class="btn btn-outline-success" routerLink="/add-employee">
+    Add New Employee
+  </button>
 
   <!-- Employee Table -->
   <div class="table-container">
@@ -52,6 +56,7 @@
           <th>Name</th>
           <th>Salary</th>
           <th>Age</th>
+          <th>Role</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -61,13 +66,10 @@
           <td>{{ employee.employee_name }}</td>
           <td>${{ employee.employee_salary | number }}</td>
           <td>{{ employee.employee_age }}</td>
+          <td>{{ employee.profession }}</td>
           <td>
-            <button class="btn btn-secondary btn-sm" (click)="editEmployee(employee)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-              </svg>
-            </button>
+            <button class="btn btn-sm btn-outline-secondary me-2" (click)="editEmployee(employee.id!)"><b>Edit</b></button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteEmployee(employee.id!)"><b>Delete</b></button>
           </td>
         </tr>
       </tbody>

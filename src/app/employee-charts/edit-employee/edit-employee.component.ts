@@ -1,34 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EmployeeService, EmployeeWithProfession } from '../employee.service';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { EmployeeService } from '../employee.service';
+import { Employee } from '../employee.model';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-edit-employee',
-  imports: [ReactiveFormsModule],
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './edit-employee.component.html',
-  styleUrl: './edit-employee.component.css',
+  styleUrls: ['./edit-employee.component.css'],
 })
 export class EditEmployeeComponent implements OnInit {
-  // Define the form
   employeeForm = new FormGroup({
-    firstName: new FormControl('', { validators: [Validators.required] }),
-    lastName: new FormControl('', { validators: [Validators.required] }),
-    email: new FormControl('', {
-      validators: [Validators.required, Validators.email],
-    }),
-    contactNumber: new FormControl('', {
-      validators: [Validators.required, Validators.pattern('^[0-9]+$')],
-    }),
-    dob: new FormControl('', { validators: [Validators.required] }),
-    profession: new FormControl('', { validators: [Validators.required] }),
+    employee_name: new FormControl('', Validators.required),
+    employee_salary: new FormControl('', [
+      Validators.required,
+      Validators.min(0),
+    ]),
+    employee_age: new FormControl('', [Validators.required, Validators.min(0)]),
+    profession: new FormControl('', Validators.required),
   });
 
-  // List of professions for dropdown
-  professions: string[] = ['Engineer', 'Manager', 'HR', 'Sales'];
-
-  // Employee ID (to fetch and update data)
   employeeId: number | null = null;
+  professions: string[] = [
+    'UI/UX Designer',
+    'Software Developer',
+    'HR',
+    'Sales',
+  ];
 
   constructor(
     private employeeService: EmployeeService,
@@ -37,49 +42,66 @@ export class EditEmployeeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Get employee ID from the URL
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.employeeId = +id;
-        this.loadEmployee(+id);
+        this.loadEmployee(this.employeeId);
       }
     });
   }
 
-  // Load employee details into the form
   loadEmployee(id: number) {
-    const employee = this.employeeService.getEmployeeById(id);
-    if (employee) {
-      this.employeeForm.patchValue(employee);
-    } else {
-      this.router.navigate(['/employee-list']); // Redirect if employee not found
-    }
+    this.employeeService.getEmployee(id).subscribe({
+      next: (employee) => {
+        if (!employee) {
+          alert('Employee not found');
+          this.router.navigate(['/employee-lists']);
+          return;
+        }
+        this.employeeForm.patchValue({
+          employee_name: employee.employee_name,
+          employee_salary: employee.employee_salary.toString(),
+          employee_age: employee.employee_age.toString(),
+          profession: employee.profession ?? '', // add profession
+        });
+      },
+      error: () => {
+        alert('Employee not found');
+        this.router.navigate(['/employee-lists']);
+      },
+    });
   }
 
-  // Handle form submission
   editEmployee() {
-    if (this.employeeForm.valid && this.employeeId !== null) {
-      const updatedEmployee: EmployeeWithProfession = {
-        id: this.employeeId,
-        firstName: this.employeeForm.value.firstName!,
-        lastName: this.employeeForm.value.lastName!,
-        email: this.employeeForm.value.email!,
-        contactNumber: this.employeeForm.value.contactNumber!,
-        dob: this.employeeForm.value.dob!,
-        age: this.calculateAge(this.employeeForm.value.dob!),
-        profession: this.employeeForm.value.profession!,
-      };
-      this.employeeService.updateEmployee(updatedEmployee);
-      this.router.navigate(['/employee-list']);
+    if (this.employeeForm.invalid || this.employeeId === null) {
+      alert('Please fill all required fields correctly.');
+      return;
     }
+
+    const updatedEmployee: Employee = {
+      id: this.employeeId,
+      employee_name: this.employeeForm.value.employee_name!,
+      employee_salary: Number(this.employeeForm.value.employee_salary),
+      employee_age: Number(this.employeeForm.value.employee_age),
+      profession: this.employeeForm.value.profession!,
+    };
+
+    this.employeeService
+      .updateEmployee(this.employeeId, updatedEmployee)
+      .subscribe({
+        next: () => {
+          alert('Employee updated successfully!');
+          this.router.navigate(['/employee-lists']);
+        },
+        error: (err) => {
+          console.error('Update failed', err);
+          alert('Failed to update employee.');
+        },
+      });
   }
 
-  // Calculate age based on date of birth
-  calculateAge(dob: string): number {
-    const birthDate = new Date(dob);
-    const ageDifMs = Date.now() - birthDate.getTime();
-    const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  goBack(): void {
+    this.router.navigate(['/employee-lists']);
   }
 }

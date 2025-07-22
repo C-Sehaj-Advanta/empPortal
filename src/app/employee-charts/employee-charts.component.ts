@@ -7,9 +7,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { EmployeeService } from './employee.service';
 import { Employee } from './employee.model.js';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-
 @Component({
   selector: 'app-employee-charts',
   standalone: true,
@@ -19,7 +18,8 @@ import { HttpClient } from '@angular/common/http';
     FormsModule,
     MatPaginatorModule,
     MatTooltipModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterModule
   ],
   templateUrl: './employee-charts.component.html',
   styleUrls: ['./employee-charts.component.css']
@@ -33,8 +33,9 @@ export class EmployeeListsComponent implements OnInit {
 
   loading = false;
   error: string | null = null;
+  employees: Employee[] = [];
 
-  totalItems = 50;
+  totalItems = 0;
   pageSize = 10;
   currentPage = 0;
 
@@ -46,7 +47,7 @@ export class EmployeeListsComponent implements OnInit {
 
   constructor(
     private employeeService: EmployeeService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -86,8 +87,15 @@ export class EmployeeListsComponent implements OnInit {
   sortData() {
     if (this.sortColumn) {
       this.filteredSortedData.sort((a, b) => {
-        const aValue = a[this.sortColumn];
-        const bValue = b[this.sortColumn];
+        let aValue: any = (a as any)[this.sortColumn];
+        let bValue: any = (b as any)[this.sortColumn]; 
+
+
+        if (this.sortColumn === 'id' || this.sortColumn === 'employee_salary' || this.sortColumn === 'employee_age') {
+          aValue = Number(aValue);
+          bValue = Number(bValue);
+        }
+       
   
         let comparison = 0;
         if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -124,7 +132,18 @@ export class EmployeeListsComponent implements OnInit {
     this.filteredData = this.filteredSortedData.slice(startIndex, endIndex);
   }
 
-  editEmployee(data: Employee): void {
-    this.router.navigate([`/employee-list/${data.id}/edit`]);
+  editEmployee(id: number) {
+    // Navigate to the edit page with the employee ID
+    this.router.navigate(['/edit', id]);
   }
+
+  deleteEmployee(id: number) {
+    if (confirm('Are you sure you want to delete this employee?')) {
+      this.employeeService.deleteEmployee(id).subscribe(() => {
+        alert('Employee deleted successfully');
+        this.fetchData(); // refresh the list
+      });
+    }
+  }
+
 }

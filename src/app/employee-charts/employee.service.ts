@@ -1,78 +1,99 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { catchError, map, Observable, of } from 'rxjs';
-import { Employee } from './employee.model.js';
+// import { HttpClient } from '@angular/common/http';
+// import { Injectable } from '@angular/core';
+// import { Observable, map } from 'rxjs';
+// import { Employee } from './employee.model';
 
-export interface EmployeeWithProfession extends Employee {
-  profession?: string;
-}
+// @Injectable({
+//   providedIn: 'root',
+// })
+// export class EmployeeService {
+//   private baseUrl = 'http://localhost:3000';
+
+//   constructor(private http: HttpClient) {}
+
+//   getEmployees(): Observable<Employee[]> {
+//     return this.http.get<Employee[]>(`${this.baseUrl}/employees`);
+//   }
+
+//   getEmployee(id: number): Observable<Employee | undefined> {
+//     return this.getEmployees().pipe(
+//       map((employees) => employees.find((emp) => emp.id === id))
+//     );
+//   }
+
+//   createEmployee(employee: Omit<Employee, 'id'>): Observable<Employee> {
+//     // POST to /employees to create
+//     return this.http.post<Employee>(`${this.baseUrl}/employees`, employee);
+//   }
+
+//   updateEmployee(
+//     id: number,
+//     employeeData: Partial<Employee>
+//   ): Observable<Employee> {
+//     // PUT to /employees/:id to update
+//     return this.http.put<Employee>(
+//       `${this.baseUrl}/employees/${id}`,
+//       employeeData
+//     );
+//   }
+
+//   deleteEmployee(id: number): Observable<void> {
+//     // DELETE to /employees/:id to delete
+//     return this.http.delete<void>(`${this.baseUrl}/employees/${id}`);
+//   }
+// }
+
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, map, catchError, of, throwError } from 'rxjs'; // Added HttpErrorResponse, catchError, of, throwError
+import { Employee } from './employee.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EmployeeService {
-  private apiUrl = 'https://dummy.restapiexample.com/api/v1/employees';
-  storageKey = 'employees';
+  private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) {}
 
-  getEmployees(): Observable<EmployeeWithProfession[]> {
-    const localEmployees = localStorage.getItem(this.storageKey);
-    if (localEmployees) {
-      return of(JSON.parse(localEmployees) as EmployeeWithProfession[]);
-    }
+  getEmployees(): Observable<Employee[]> {
+    return this.http.get<Employee[]>(`${this.baseUrl}/employees`);
+  }
 
-    return this.http.get<{ status: string; data: Employee[] }>(this.apiUrl).pipe(
-      map((res) => res.data.map((employee) => this.transformEmployee(employee))),
-      map((employees) => {
-        localStorage.setItem(this.storageKey, JSON.stringify(employees));
-        return employees;
-      }),
-      catchError(this.handleError)
+  // --- MODIFIED METHOD ---
+  getEmployee(id: number): Observable<Employee | undefined> {
+    return this.http.get<Employee>(`${this.baseUrl}/employees/${id}`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        // If the server responds with a 404 (Not Found),
+        // we return an Observable of undefined.
+        // For other errors, we re-throw them.
+        if (error.status === 404) {
+          console.warn(`Employee with ID ${id} not found on the server.`);
+          return of(undefined);
+        }
+        // Re-throw other types of errors to be handled by the component's error block
+        return throwError(() => new Error(`Error fetching employee: ${error.message}`));
+      })
     );
   }
 
-  getNextEmployeeId(): number {
-    const employees = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-    return employees.length > 0
-      ? Math.max(...employees.map((e: EmployeeWithProfession) => e.id)) + 1
-      : 1;
+  createEmployee(employee: Omit<Employee, 'id'>): Observable<Employee> {
+    return this.http.post<Employee>(`${this.baseUrl}/employees`, employee);
   }
 
-  getEmployeeById(id: number): EmployeeWithProfession | undefined {
-    const employees = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-    return employees.find((employee: EmployeeWithProfession) => employee.id === id);
+  updateEmployee(
+    id: number,
+    employeeData: Partial<Employee>
+  ): Observable<Employee> {
+    // PUT to /employees/:id to update
+    return this.http.put<Employee>(
+      `${this.baseUrl}/employees/${id}`,
+      employeeData
+    );
   }
 
-  addEmployee(employee: EmployeeWithProfession): void {
-    const employees = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-    employees.push(employee);
-    localStorage.setItem(this.storageKey, JSON.stringify(employees));
-  }
-
-  private transformEmployee(employee: Employee): EmployeeWithProfession {
-    // Since API has only these fields, map them directly, 
-    // add empty strings for missing fields (profession)
-    return {
-      id: employee.id,
-      employee_name: employee.employee_name,
-      employee_salary: employee.employee_salary,
-      employee_age: employee.employee_age,
-      profession: '',
-    } as EmployeeWithProfession;
-  }
-
-  updateEmployee(updatedEmployee: EmployeeWithProfession) {
-    const employees = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-    const index = employees.findIndex((employee: EmployeeWithProfession) => employee.id === updatedEmployee.id);
-    if (index !== -1) {
-      employees[index] = updatedEmployee;
-      localStorage.setItem(this.storageKey, JSON.stringify(employees));
-    }
-  }
-
-  private handleError(error: any): Observable<EmployeeWithProfession[]> {
-    console.error(`Error: ${error.message}`);
-    return of([] as EmployeeWithProfession[]);
+  deleteEmployee(id: number): Observable<void> {
+    // DELETE to /employees/:id to delete
+    return this.http.delete<void>(`${this.baseUrl}/employees/${id}`);
   }
 }

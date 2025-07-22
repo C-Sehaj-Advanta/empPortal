@@ -1,67 +1,108 @@
-<div class="form-container">
-    <h2>Edit Employee</h2>
+<div class="container mt-4">
+  <div class="card p-4 shadow-sm">
+    <span>
+      <button type="button" class="btn-close" aria-label="Close" (click)="goBack()"></button>
+      <h2 class="card-title text-center mb-4">Edit Employee</h2>
+    </span>
+
     <form [formGroup]="employeeForm" (ngSubmit)="editEmployee()">
-      
-      <!-- First Name -->
-      <div>
-        <label for="firstName">First Name</label>
-        <input id="firstName" formControlName="firstName" />
-        @if (employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched) {
-          <div class="error">First Name is required</div>
-        }
+      <div class="mb-3">
+        <label for="employee_name" class="form-label"><b>Employee Name</b></label>
+        <input
+          type="text"
+          class="form-control"
+          id="employee_name"
+          formControlName="employee_name"
+          required
+          aria-label="Employee Name"
+        />
+        <div
+          *ngIf="
+            employeeForm.get('employee_name')?.invalid &&
+            employeeForm.get('employee_name')?.touched
+          "
+          class="text-danger"
+        >
+          Employee Name is required.
+        </div>
       </div>
-  
-      <!-- Last Name -->
-      <div>
-        <label for="lastName">Last Name</label>
-        <input id="lastName" formControlName="lastName" />
-        @if (employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched) {
-          <div class="error">Last Name is required</div>
-        }
+
+      <div class="mb-3">
+        <label for="employee_salary" class="form-label"><b>Employee Salary</b></label>
+        <input
+          type="number"
+          class="form-control"
+          id="employee_salary"
+          formControlName="employee_salary"
+          required
+          aria-label="Employee Salary"
+        />
+        <div
+          *ngIf="
+            employeeForm.get('employee_salary')?.invalid &&
+            employeeForm.get('employee_salary')?.touched
+          "
+          class="text-danger"
+        >
+          Salary is required and must be ≥ 0.
+        </div>
       </div>
-  
-      <!-- Email -->
-      <div>
-        <label for="email">Email</label>
-        <input id="email" formControlName="email" />
-        @if (employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched) {
-          <div class="error">Valid email is required</div>
-        }
+
+      <div class="mb-3">
+        <label for="employee_age" class="form-label"><b>Employee Age</b></label>
+        <input
+          type="number"
+          class="form-control"
+          id="employee_age"
+          formControlName="employee_age"
+          required
+          aria-label="Employee Age"
+        />
+        <div
+          *ngIf="
+            employeeForm.get('employee_age')?.invalid &&
+            employeeForm.get('employee_age')?.touched
+          "
+          class="text-danger"
+        >
+          Age is required and must be ≥ 0.
+        </div>
       </div>
-  
-      <!-- Contact Number -->
-      <div>
-        <label for="contactNumber">Contact Number</label>
-        <input id="contactNumber" formControlName="contactNumber" />
-        @if (employeeForm.get('contactNumber')?.invalid && employeeForm.get('contactNumber')?.touched) {
-          <div class="error">Valid contact number is required</div>
-        }
-      </div>
-  
-      <!-- Date of Birth -->
-      <div>
-        <label for="dob">Date of Birth</label>
-        <input id="dob" type="date" formControlName="dob" />
-        @if (employeeForm.get('dob')?.invalid && employeeForm.get('dob')?.touched) {
-          <div class="error">Date of Birth is required</div>
-        }
-      </div>
-  
-      <!-- Profession -->
-      <div>
-        <label for="profession">Profession</label>
-        <select id="profession" formControlName="profession">
-          @for (profession of professions; track profession) {
-            <option [value]="profession">{{ profession }}</option>
-          }
+
+      <div class="mb-3">
+        <label for="profession" class="form-label"><b>Profession</b></label>
+        <select
+          class="form-select"
+          id="profession"
+          formControlName="profession"
+          required
+          aria-label="Employee Profession"
+        >
+          <option value="" disabled>Select profession</option>
+          <option *ngFor="let prof of professions" [value]="prof">
+            {{ prof }}
+          </option>
         </select>
-        @if (employeeForm.get('profession')?.invalid && employeeForm.get('profession')?.touched) {
-          <div class="error">Profession is required</div>
-        }
+        <div
+          *ngIf="
+            employeeForm.get('profession')?.invalid &&
+            employeeForm.get('profession')?.touched
+          "
+          class="text-danger"
+        >
+          Profession is required.
+        </div>
       </div>
-  
-      <!-- Submit Button -->
-      <button type="submit" [disabled]="employeeForm.invalid">Save Changes</button>
+
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+        <button
+          type="submit"
+          class="btn btn-outline-primary me-md-2"
+          [disabled]="employeeForm.invalid"
+        >
+          Save Changes
+        </button>
+      </div>
     </form>
   </div>
-  
+</div>

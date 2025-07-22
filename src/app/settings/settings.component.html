@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <div class="card p-4 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="card-title text-center text-primary flex-grow-1 mb-0">
+        Settings
+      </h2>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="goBack()"
+      ></button>
+    </div>
+    <hr />
+
+    <div class="d-flex align-items-center justify-content-between py-3">
+      <label class="form-check-label fs-5" for="darkModeSwitch"
+        >Dark Mode</label
+      >
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="darkModeSwitch"
+          role="switch"
+          [checked]="(themeService.isDarkTheme | async)!"
+          (change)="themeService.toggleTheme()"
+          aria-label="Toggle Dark Mode"
+        />
+      </div>
+    </div>
+  </div>
+</div>

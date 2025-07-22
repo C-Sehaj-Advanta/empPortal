@@ -58,3 +58,6 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 # empPortal
+
+# To run the .json file:
+Open the bash terminal, use "cd" command to navigate to the root folder the db.json file is in, which is: "/Users/kuldeepchahal/Documents/Sehaj/Coding '25/G Project 1/empPortal". Then run 'json-server --watch db.json'
