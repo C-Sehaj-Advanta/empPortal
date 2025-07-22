@@ -60,4 +60,4 @@ For more information on using the Angular CLI, including detailed command refere
 # empPortal
 
 # To run the .json file:
-Open the bash terminal, use "cd" command to navigate to the root folder the db.json file is in, which is: "/Users/kuldeepchahal/Documents/Sehaj/Coding '25/G Project 1/empPortal". Then run 'json-server --watch db.json'
+Open the bash terminal, use "cd" command to navigate to the root folder the db.json file is in, which is in the /empPortal project. Then run 'json-server --watch db.json'
